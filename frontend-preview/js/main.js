@@ -144,23 +144,13 @@
     button.addEventListener('click', () => showToast('英文版内容将在后续阶段接入'));
   });
 
-  const modal = document.querySelector('.video-modal');
-  const openModal = () => {
-    if (!modal) return;
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-    body.style.overflow = 'hidden';
-  };
-  const closeModal = () => {
-    if (!modal) return;
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-    body.style.overflow = '';
-  };
-  document.querySelectorAll('[data-video-play]').forEach((button) => button.addEventListener('click', openModal));
-  modal?.querySelector('.video-modal-close')?.addEventListener('click', closeModal);
-  modal?.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeModal(); });
+  document.querySelectorAll('[data-inline-video-play]').forEach((button) => {
+    const video = button.closest('.video-stage')?.querySelector('video');
+    if (!video) return;
+    button.addEventListener('click', () => video.play().catch(() => {}));
+    video.addEventListener('play', () => { button.hidden = true; });
+    video.addEventListener('ended', () => { button.hidden = false; });
+  });
 
   const backToTop = document.querySelector('.back-to-top');
   window.addEventListener('scroll', () => backToTop?.classList.toggle('visible', window.scrollY > 500), { passive: true });

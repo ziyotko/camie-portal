@@ -99,7 +99,6 @@ function footer(isHome = false) {
   </div></footer>
   <div class="toast" role="status" aria-live="polite"></div>
   <button class="back-to-top" type="button" aria-label="返回顶部">↑</button>
-  <div class="video-modal" aria-hidden="true"><div class="video-modal-panel"><button class="video-modal-close" type="button" aria-label="关闭">×</button><img src="${p}assets/images/video-poster.png" alt="视频演示画面"></div></div>
   <script src="${p}js/main.js"></script>`;
 }
 
@@ -160,11 +159,28 @@ const homeUpdateTitles = [
 ];
 
 const partnerRows = [
-  ['nanjing','cnty','kelin','longking','hefei'],
-  ['kangning','jereh','beipai','dihill','yihuan'],
+  [
+    { name: '南京大学环境学院', image: 'nanjing-university.png', url: 'https://www.nju.edu.cn/', size: '600 535', viewBox: '40 14 526 521' },
+    { name: '紫金龙净环保新能源股份有限公司', image: 'longking.png', url: 'https://www.longking.com.cn/', size: '356 349', viewBox: '35 35 280 282' },
+    { name: '北京城市排水集团有限责任公司', image: 'beijing-drainage.png', url: 'https://www.bdc.cn/', size: '438 258', viewBox: '0 78 438 125' },
+    { name: '苏州帝瀚环保科技股份有限公司', image: 'dihill.png', url: 'https://www.dihillgreen.com/', size: '945 944', viewBox: '85 385 809 162' },
+    { name: '江苏一环集团有限公司', image: 'jiangsu-yihuan.png', url: 'http://www.yihuan.com/', size: '1178 784', viewBox: '0 40 1178 716' },
+    { name: '河南康宁特环保科技股份有限公司', image: 'kangningte.png', url: 'https://www.knthb.com/', size: '167 63', viewBox: '0 0 167 63' },
+  ],
+  [
+    { name: '中国天楹股份有限公司', image: 'cnty.png', url: 'https://www.cnty.cn/', size: '192 192', viewBox: '0 8 192 176' },
+    { name: '杰瑞新能源再生循环科技有限公司', image: 'jereh-recycling.png', url: 'https://www.jereh.com/cn/', size: '536 536', viewBox: '0 175 536 190' },
+    { name: '合肥通用机械研究院有限公司', image: 'hefei-general-machinery.png', url: 'http://www.hgmri.com/', size: '1068 446', viewBox: '10 45 1045 376' },
+    { name: '长江生态环保集团有限公司', image: 'yangtze-ecology.png', url: 'https://www.yeec.com.cn/', size: '418 55', viewBox: '0 0 418 55' },
+    { name: '科林环保技术有限责任公司', image: 'kelin.png', url: 'https://www.kelin-china.com/', size: '500 500', viewBox: '25 105 441 303' },
+    { name: '中车产业投资有限公司', image: 'crrc-investment.png', url: 'https://www.crrcgc.cc/cytz/277_19585/index.html', size: '600 434', viewBox: '20 112 560 208' },
+  ],
 ];
 
-const partnerMarquee = partnerRows.map((row) => `<div class="partner-row"><div class="partner-track">${[false, true].map((duplicate) => `<div class="partner-set" ${duplicate ? 'aria-hidden="true"' : ''}>${row.map((name) => `<img src="assets/images/partner-${name}.png" alt="副会长单位标识">`).join('')}</div>`).join('')}</div></div>`).join('');
+const partnerMarquee = partnerRows.map((row) => `<div class="partner-row"><div class="partner-track">${[false, true].map((duplicate) => `<div class="partner-set" ${duplicate ? 'aria-hidden="true"' : ''}>${row.map((partner) => {
+  const [width, height] = partner.size.split(' ');
+  return `<a class="partner-logo" href="${partner.url}" target="_blank" rel="noopener noreferrer" aria-label="访问${partner.name}官网" ${duplicate ? 'tabindex="-1"' : ''}><svg class="partner-logo-art" viewBox="${partner.viewBox}" aria-hidden="true" focusable="false"><image href="assets/images/partner-logos/${partner.image}" width="${width}" height="${height}"></image></svg></a>`;
+}).join('')}</div>`).join('')}</div></div>`).join('');
 
 function listRows(titles = defaultTitles, detail = 'ministry-detail.html') {
   return `<ul class="news-list">${titles.map((title, index) => `<li class="news-row searchable"><a href="${detail}" data-base-title="${title}">${title}</a><time datetime="2026-${index < 4 ? '07' : '06'}-${String(28 - index).padStart(2, '0')}">${index < 4 ? '2026-07' : '2026-06'}-${String(28 - index).padStart(2, '0')}</time></li>`).join('')}</ul>`;
@@ -218,9 +234,9 @@ const pageSpecs = [
   ['ministry-detail.html', articlePage({ title: '部委动态详情', active: 'ministry', crumbItems: ['部委动态', '政策文件', '国家鼓励发展的重大环保技术装备目录'], menu: menus.ministry })],
 ];
 
-const videoCards = Array.from({ length: 6 }, (_, i) => `<article class="video-card searchable"><div class="video-thumb"><img src="../assets/images/video-thumb.png" alt="会议视频缩略图"><button class="play-button" type="button" data-video-play aria-label="播放视频"></button></div><h2><a href="video-detail.html">关于征集《晶体硅光伏组件回收再利用设备》等三项行业标准项目</a></h2><p>聚焦环保装备行业标准建设与绿色低碳技术成果转化的专题视频内容。</p><footer><time>2026-07-${28 - i}</time><a href="video-detail.html">查看详情 →</a></footer></article>`).join('');
+const videoCards = Array.from({ length: 6 }, (_, i) => `<article class="video-card searchable"><div class="video-thumb"><img src="../assets/images/video-thumb.png" alt="会议视频缩略图"><a class="play-button" href="video-detail.html" aria-label="进入视频详情页播放"></a></div><h2><a href="video-detail.html">关于征集《晶体硅光伏组件回收再利用设备》等三项行业标准项目</a></h2><p>聚焦环保装备行业标准建设与绿色低碳技术成果转化的专题视频内容。</p><footer><time>2026-07-${28 - i}</time><a href="video-detail.html">查看详情 →</a></footer></article>`).join('');
 pageSpecs.push(['videos.html', documentPage({ title: '视频专区', active: 'news', content: `<main class="page-shell"><div class="page-inner">${breadcrumb(['视频专区'])}<div class="content-grid"><aside>${menus.videos}</aside><section><div class="video-grid-card"><div class="video-grid">${videoCards}</div></div>${pagination()}</section></div></div></main>` })]);
-pageSpecs.push(['video-detail.html', documentPage({ title: '视频详情', active: 'news', content: `<main class="page-shell"><div class="page-inner">${breadcrumb(['视频专区'])}<div class="content-grid"><aside>${menus.videos}</aside><article class="article-card video-detail-card"><header class="article-header"><h1>关于征集《晶体硅光伏组件回收再利用设备》等三项行业标准项目</h1><div class="article-meta"><span>2026-07-28</span><span>环保装备行业标准专题视频</span></div></header><div class="video-stage"><img src="../assets/images/video-poster.png" alt="智能制造机械臂视频封面"><button class="play-button" type="button" data-video-play aria-label="播放视频"></button></div></article></div></div></main>` })]);
+pageSpecs.push(['video-detail.html', documentPage({ title: '视频详情', active: 'news', content: `<main class="page-shell"><div class="page-inner">${breadcrumb(['视频专区', '视频详情'])}<div class="content-grid"><aside>${menus.videos}</aside><article class="article-card video-detail-card"><header class="article-header"><h1>关于征集《晶体硅光伏组件回收再利用设备》等三项行业标准项目</h1><div class="article-meta"><span>2026-07-28</span><span>环保装备行业标准专题视频</span></div></header><div class="video-stage"><video controls preload="metadata" poster="../assets/images/video-poster.png"><source src="../assets/videos/big-buck-bunny.mp4" type="video/mp4">您的浏览器不支持 HTML5 视频播放。</video><button class="play-button" type="button" data-inline-video-play aria-label="播放视频"></button></div></article></div></div></main>` })]);
 
 for (const [filename, html] of pageSpecs) writeFileSync(join(pagesDir, filename), html);
 
