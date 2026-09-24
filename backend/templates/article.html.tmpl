@@ -1,0 +1,20 @@
+{{define "article"}}{{template "head" .}}
+<main class="wrap inner-main" id="main-content">
+<nav class="breadcrumb" aria-label="当前位置"><a href="{{root . "index.html"}}">首页</a><span class="breadcrumb-separator" aria-hidden="true">›</span>{{range .Breadcrumbs}}<a href="{{root $ .Href}}">{{.Name}}</a><span class="breadcrumb-separator" aria-hidden="true">›</span>{{end}}<a href="{{root . .BackHref}}">{{.Article.Category}}</a><span class="breadcrumb-separator" aria-hidden="true">›</span><span aria-current="page">{{if .Article.Video}}视频详情{{else}}新闻详情{{end}}</span></nav>
+<div class="inner-layout">{{template "sidebar" .}}
+{{with .Article}}
+<article class="{{if .Video}}video-panel{{else}}article-panel{{end}}">
+<h1>{{.Title}}</h1>
+{{if .Video}}
+<p class="video-description">{{.Summary}}</p>
+{{if .HasVideo}}<div class="article-body">{{.Content}}</div>{{else}}<button class="video-cover" data-open="视频播放" aria-label="播放视频：{{.Title}}"><img src="{{root $ .Cover}}" alt="{{.Title}}视频封面"></button>{{end}}
+{{else}}
+<div class="article-meta"><time>{{.Date}}</time>　{{.Category}}</div><div class="article-body">{{.Content}}</div>
+{{end}}
+{{if .Attachments}}<section class="attachments"><h2>相关附件</h2>{{range .Attachments}}<a href="{{root $ .URL}}" download>{{.Name}}</a>{{end}}</section>{{end}}
+<nav class="article-pager" aria-label="相邻文章">
+{{with $.PreviousArticle}}<a href="{{root $ .Href}}"><span>上一篇：</span>{{.Title}}</a>{{else}}<span>没有上一篇了</span>{{end}}
+{{with $.NextArticle}}<a href="{{root $ .Href}}"><span>下一篇：</span>{{.Title}}</a>{{else}}<span>没有下一篇了</span>{{end}}
+</nav>
+</article>{{end}}</div></main>{{template "foot" .}}{{end}}
+{{define "empty-detail"}}{{template "head" .}}<main class="wrap inner-main" id="main-content"><div class="empty-state"><h1>暂无可展示的内容</h1><a href="{{root . "news.html"}}">浏览新闻资讯</a></div></main>{{template "foot" .}}{{end}}

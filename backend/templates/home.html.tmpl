@@ -1,0 +1,125 @@
+{{define "home"}}{{template "head" .}}<main id="main-content">
+<section class="home-top">
+<div class="wrap">
+<div class="hero-row">
+<div class="hero" data-hero-carousel aria-label="焦点新闻轮播">{{range $i, $a := .Hero}}<a href="{{root $ $a.Href}}" data-slide-panel="{{$i}}" {{if $i}}hidden{{end}}>
+<img class="hero-photo" src="{{root $ $a.Cover}}" alt="{{$a.Title}}">
+<h1 class="hero-caption">{{$a.Title}}</h1>
+</a>{{else}}<div class="empty-state">暂无焦点新闻</div>{{end}}{{if .Hero}}<button type="button" class="hero-arrow previous" data-hero-step="-1" aria-label="上一条焦点新闻">‹</button><button type="button" class="hero-arrow next" data-hero-step="1" aria-label="下一条焦点新闻">›</button>{{end}}<div class="carousel-dots" aria-label="焦点新闻切换">{{range $i,$a := .Hero}}<button type="button" data-slide="{{$i}}" class="{{if not $i}}active{{end}}" aria-label="第 {{add $i 1}} 条焦点新闻" aria-pressed="{{if $i}}false{{else}}true{{end}}">
+</button>{{end}}</div>
+</div>
+<section class="notice" aria-label="协会通知">
+<div class="notice-tabs" role="tablist">
+{{range $i,$group := .Notices}}<a role="tab" aria-selected="{{if $i}}false{{else}}true{{end}}" data-notice="{{$i}}" class="{{if not $i}}active{{end}}" href="{{root $ $group.Href}}">{{$group.Name}}</a>{{end}}
+</div>{{range $i,$group := .Notices}}<ul class="notice-list" data-notice-panel="{{$i}}" {{if $i}}hidden{{end}}>{{range $group.Items}}<li>
+<a href="{{root $ .Href}}" title="{{.Title}}">{{.Title}}</a>
+</li>{{else}}<li>暂无内容</li>{{end}}</ul>{{end}}</section>
+</div>
+<div class="quick-links">
+<a class="quick-link" href="{{columnURL $ "环保装备高质量发展大会"}}">
+<img src="{{root $ "slice/N2UgQ4VRSsKXNGIExBJlJw@2x.png"}}" alt="">
+<span>环保装备高质量发展大会</span>
+</a>
+<a class="quick-link" href="{{columnURL $ "鼓励目录"}}">
+<img src="{{root $ "slice/容器@2x(4).png"}}" alt="">
+<span>鼓励目录</span>
+</a>
+<a class="quick-link" href="{{columnURL $ "规范条件企业"}}">
+<img src="{{root $ "slice/容器@2x(3).png"}}" alt="">
+<span>规范条件企业</span>
+</a>
+<a class="quick-link" href="{{columnURL $ "揭榜挂帅"}}">
+<img src="{{root $ "slice/容器@2x(2).png"}}" alt="">
+<span>揭榜挂帅</span>
+</a>
+<button class="quick-arrow" data-quick="-1" aria-label="上一组快捷入口">
+<img src="{{root $ "slice/chevron-right-circle@2x.png"}}" alt="">
+</button>
+<button class="quick-arrow next" data-quick="1" aria-label="下一组快捷入口">
+<img src="{{root $ "slice/chevron-right-circle@2x.png"}}" alt="">
+</button>
+</div>
+<div class="event-banner" data-event-carousel aria-label="专题平台轮播">
+<div class="event-banner-track">
+<a class="event-banner-slide" href="{{columnURL $ "环保装备高质量发展大会"}}" data-event-panel="0">
+<img src="{{root $ "slice/容器 59@2x.png"}}" alt="环境保护大会 Environmental Protection Equipment Quality Conference">
+</a>
+<a class="event-banner-slide" href="{{columnURL $ "环保装备高质量发展大会"}}" data-event-panel="1" aria-hidden="true" tabindex="-1">
+<img src="{{root $ "assets/event-banner-tech.png"}}" alt="技术成果转化平台">
+</a>
+<a class="event-banner-slide" href="{{columnURL $ "环保装备高质量发展大会"}}" data-event-panel="2" aria-hidden="true" tabindex="-1">
+<img src="{{root $ "assets/event-banner-talent.png"}}" alt="人才培养交流平台">
+</a>
+</div>
+<div class="event-banner-dots" aria-label="专题平台切换">
+<button type="button" data-event-slide="0" class="active" aria-label="第 1 张专题图" aria-pressed="true"></button>
+<button type="button" data-event-slide="1" aria-label="第 2 张专题图" aria-pressed="false"></button>
+<button type="button" data-event-slide="2" aria-label="第 3 张专题图" aria-pressed="false"></button>
+</div>
+</div>
+</div>
+</section>
+<aside class="floating-tools" aria-label="快捷服务">
+<button class="party-tool" data-open="党建专栏">
+<img src="{{root $ "slice/党徽黄色1024X1024@2x(1).png"}}" alt="">党建专栏</button>
+<button type="button">
+<img src="{{root $ "slice/setup@2x.png"}}" alt="">公众号</button>
+<a href="https://demo.miic.com.cn/business_member/register" target="_blank" rel="noopener noreferrer">
+<img src="{{root $ "slice/容器@2x(1).png"}}" alt="">申请入会</a>
+<a href="https://demo.miic.com.cn/business_member/login" target="_blank" rel="noopener noreferrer">
+<img src="{{root $ "slice/容器@2x.png"}}" alt="">我的账号</a>
+</aside>
+<section class="tech-section">
+<div class="wrap">
+<div class="section-tabs" role="tablist" aria-label="专业资讯">
+{{range $i,$group := .Topics}}<a role="tab" aria-selected="{{if $i}}false{{else}}true{{end}}" data-tech="{{$i}}" class="{{if not $i}}active{{end}}" href="{{root $ $group.Href}}">{{$group.Name}}</a>{{end}}
+<a class="section-tab-link" href="{{root . .DataCenterURL}}">数据中心</a>
+</div>{{range $i,$group := .Topics}}<div class="tech-list" data-tech-panel="{{$i}}" {{if $i}}hidden{{end}}>{{range $group.Items}}<a href="{{root $ .Href}}">
+<span>{{.Title}}</span>
+<time>{{.Date}}</time>
+</a>{{else}}<p class="empty-state">暂无内容</p>{{end}}</div>{{end}}</div>
+</section>
+<section class="services-section" id="services">
+<div class="wrap">
+<h2 class="section-heading">协会服务</h2>
+<div class="services-grid">
+<a class="service-link" href="{{columnURL $ "科技成果评价"}}">
+<img src="{{root $ "slice/组 167@2x.png"}}" alt="">科技成果评价</a>
+<a class="service-link" href="{{columnURL $ "标准立项申报"}}">
+<img src="{{root $ "slice/组 170@2x.png"}}" alt="">标准立项申报</a>
+<a class="service-link" href="{{columnURL $ "奖项申报服务"}}">
+<img src="{{root $ "slice/组 173@2x.png"}}" alt="">奖项申报服务</a>
+<a class="service-link" href="{{columnURL $ "年度服务计划"}}">
+<img src="{{root $ "slice/组 176@2x.png"}}" alt="">年度服务计划</a>
+</div>
+</div>
+</section>
+<section class="cards-section">
+<div class="wrap info-cards">{{range $i,$group := .Cards}}<article class="info-card{{if eq $group.Name "视频专栏"}} video-column{{end}}">
+<h3>{{$group.Name}}</h3>{{with $group.Feature}}<a href="{{root $ .Href}}">
+<img class="card-photo" src="{{root $ .Cover}}" alt="{{.Title}}">
+</a>
+<a href="{{root $ .Href}}" class="card-title">{{.Title}}</a>
+<time>{{.Date}} · {{.Source}}</time>{{else}}<p class="empty-state">暂无内容</p>{{end}}<ul class="card-list">{{range $group.Rest}}<li>
+<a href="{{root $ .Href}}">{{.Title}}</a>
+</li>{{end}}</ul>
+<div class="card-buttons">
+<a class="outline-button" href="{{root $ $group.Href}}">更多内容</a>
+</div>
+</article>{{end}}</div>
+</section>
+<section class="partners-section">
+<div class="wrap">
+<div class="partner-tabs" role="tablist" aria-label="会员单位">
+<button class="active" role="tab" aria-selected="true" data-partner="0">
+<img src="{{root $ "slice/组 194@2x.png"}}" alt="">副会长单位</button>
+<button role="tab" aria-selected="false" data-partner="1">
+<span class="branch-icon" aria-hidden="true">♧</span>分支机构</button>
+</div>
+<div id="partners" data-partner-panel="0">
+<img src="{{root $ "assets/partners.png"}}" alt="副会长单位：南京工程学院、中国天楹、科林环保、龙净环保、合肥通用机械研究院、康宁特、杰瑞、北排装备、迪尔、宜兴一环" class="partner-logos">
+</div>
+<div class="branch-list" data-partner-panel="1" hidden>{{range .Branches}}<a href="{{columnURL $ .}}">{{.}}</a>{{end}}</div>
+</div>
+</section>
+</main>{{template "foot" .}}{{end}}

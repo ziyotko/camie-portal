@@ -1,0 +1,17 @@
+database:
+  dsn_env: CAMIE_DB_DSN
+server:
+  addr: 127.0.0.1:9144
+  token_env: CAMIE_STATIC_TOKEN
+  request_timeout: 10m
+site:
+  source_root: ..
+  dist_root: ../dist/camie-portal
+  preview_root: ../dist/camie-preview
+  template_root: templates
+  page_name: 环保机械协会
+  page_size: 14
+  timezone: Asia/Shanghai
+  media_base_url: ""
+  fallback_cover: assets/hero.png
+  hero_column: 焦点新闻

@@ -1,0 +1,7 @@
+dist/
+backend/config.yaml
+backend/bin/
+*.exe
+*.log
+.env
+.idea/

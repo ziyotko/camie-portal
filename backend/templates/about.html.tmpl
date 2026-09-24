@@ -1,0 +1,9 @@
+{{define "about"}}{{template "head" .}}
+<main class="wrap inner-main" id="main-content">
+<nav class="breadcrumb" aria-label="当前位置"><a href="{{root . "index.html"}}">首页</a><span class="breadcrumb-separator" aria-hidden="true">›</span><a href="{{columnURL . "关于协会"}}">关于协会</a><span class="breadcrumb-separator" aria-hidden="true">›</span><span aria-current="page">协会简介</span></nav>
+<div class="inner-layout">{{template "sidebar" .}}
+<article class="article-panel association-panel">
+<h1>协会简介</h1>
+{{with .Article}}<div class="article-body association-body">{{.Content}}</div>{{else}}<p class="empty-state">暂无已发布内容</p>{{end}}
+</article></div></main>
+{{template "foot" .}}{{end}}

@@ -1,0 +1,12 @@
+{
+  "name": "camie-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "中国环保机械行业协会静态化门户（Go + MySQL + HTML）",
+  "scripts": {
+    "preview": "cd backend && go run ./cmd/camie-static preview --config config.example.yaml",
+    "dev": "node server.cjs",
+    "start": "node server.cjs",
+    "check": "node --check script.js && node --check server.cjs"
+  }
+}

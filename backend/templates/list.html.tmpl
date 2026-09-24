@@ -1,0 +1,29 @@
+{{define "sidebar"}}
+<aside class="side-nav" aria-label="栏目导航">
+{{range .Side}}<a href="{{root $ .Href}}" class="{{if .Active}}active{{end}}" {{if .Active}}aria-current="page"{{end}}>{{.Name}}</a>{{end}}
+</aside>
+{{end}}
+{{define "rows"}}
+{{range .Items}}<a class="news-row" href="{{root $ .Href}}"><span>{{.Title}}</span><time>{{.Date}}</time></a>
+{{else}}<p class="empty-state">暂无已发布内容</p>{{end}}
+{{end}}
+{{define "list"}}{{template "head" .}}
+<main class="wrap inner-main" id="main-content">
+<nav class="breadcrumb" aria-label="当前位置"><a href="{{root . "index.html"}}">首页</a><span class="breadcrumb-separator" aria-hidden="true">›</span>{{range .Breadcrumbs}}<a href="{{root $ .Href}}">{{.Name}}</a><span class="breadcrumb-separator" aria-hidden="true">›</span>{{end}}<span aria-current="page">{{.Title}}</span></nav>
+<div class="inner-layout">{{template "sidebar" .}}
+<section id="listing" aria-label="资讯列表">
+<div class="list-panel">{{template "rows" .}}</div>
+<nav class="pagination" aria-label="分页">
+<span class="total">共 {{.Total}} 项数据</span><span>{{.PageSize}} 条/页</span>
+{{if .Previous}}<a class="arrow" href="{{root . .Previous}}" aria-label="上一页">‹</a>{{else}}<span class="arrow disabled">‹</span>{{end}}
+{{range .Pages}}<a href="{{root $ .Href}}" class="{{if .Active}}active{{end}}" {{if .Active}}aria-current="page"{{end}}>{{.Number}}</a>{{end}}
+{{if .Next}}<a class="arrow" href="{{root . .Next}}" aria-label="下一页">›</a>{{else}}<span class="arrow disabled">›</span>{{end}}
+<label class="jump">跳至 <input aria-label="跳转页码" type="number" inputmode="numeric" min="1" max="{{.TotalPages}}" value="{{.Page}}" data-page-prefix="{{root . .PagePrefix}}"> /{{.TotalPages}} 页</label>
+</nav>
+</section></div></main>
+{{template "foot" .}}{{end}}
+{{define "search"}}{{template "head" .}}
+<main class="wrap inner-main" id="main-content">
+<nav class="breadcrumb" aria-label="当前位置"><a href="{{root . "index.html"}}">首页</a><span class="breadcrumb-separator" aria-hidden="true">›</span><span aria-current="page">搜索资讯</span></nav>
+<div class="inner-layout">{{template "sidebar" .}}<section id="listing" aria-live="polite"><div class="list-panel"><h1 class="result-title">搜索资讯</h1><p class="empty-state">请在顶部输入关键词进行搜索。</p><noscript>全文搜索需要启用 JavaScript，您也可以通过栏目浏览全部静态资讯。</noscript></div></section></div>
+</main>{{template "foot" .}}{{end}}

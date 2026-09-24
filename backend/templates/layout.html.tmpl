@@ -1,0 +1,96 @@
+{{define "head"}}<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{{.Title}} - 中国环保机械行业协会">
+<title>{{.Title}} - 中国环保机械行业协会</title>
+<link rel="icon" href="{{root . "favicon.ico"}}" sizes="any">
+<link rel="stylesheet" href="{{root . "styles.css"}}">
+<script src="{{root . "generated-content.js"}}" defer>
+</script>
+<script src="{{root . "script.js"}}" defer>
+</script>
+</head>
+<body class="{{.BodyClass}}" data-page="{{.Kind}}" data-root-prefix="{{.RootPrefix}}">
+<a class="skip-link" href="#main-content">跳至主要内容</a>
+<header class="site-header">
+<div class="wrap header-main">
+<a class="brand" href="{{root $ "index.html"}}" aria-label="中国环保机械行业协会首页">
+<img src="{{root $ "slice/协会主页初步布局(1)_01@2x.png"}}" alt="中国环保机械行业协会 CAMIE">
+</a>
+<div class="slogan">
+<img src="{{root $ "slice/文本 4@2x.png"}}" alt="企业与政府沟通的纽带">
+</div>
+<form class="search-form" role="search" action="{{root $ "search.html"}}" method="get">
+<input name="q" aria-label="搜索资讯" value="" autocomplete="off">
+<button type="submit">搜索<i class="search-icon" aria-hidden="true">
+</i>
+</button>
+</form>
+</div>
+<nav class="wrap main-nav" aria-label="主导航">
+<a href="{{root $ "index.html"}}" data-nav="首页" class="{{if eq .ActiveNav "首页"}}active{{end}}" {{if eq .ActiveNav "首页"}}aria-current="page"{{end}}>首页</a>
+<a href="{{columnURL $ "党建专栏"}}" data-nav="党建专栏" class="{{if eq .ActiveNav "党建专栏"}}active{{end}}" {{if eq .ActiveNav "党建专栏"}}aria-current="page"{{end}}>
+<img src="{{root $ "slice/党徽黄色1024X1024@2x.png"}}" alt="">党建专栏</a>
+<a href="{{columnURL $ "关于协会"}}" data-nav="关于协会" class="{{if eq .ActiveNav "关于协会"}}active{{end}}" {{if eq .ActiveNav "关于协会"}}aria-current="page"{{end}}>关于协会</a>
+<a href="{{columnURL $ "部委动态"}}" data-nav="部委动态" class="{{if eq .ActiveNav "部委动态"}}active{{end}}" {{if eq .ActiveNav "部委动态"}}aria-current="page"{{end}}>部委动态</a>
+<a href="{{columnURL $ "会员中心"}}" data-nav="会员中心" class="{{if eq .ActiveNav "会员中心"}}active{{end}}" {{if eq .ActiveNav "会员中心"}}aria-current="page"{{end}}>会员中心</a>
+<a href="{{columnURL $ "协会服务"}}" data-nav="协会服务" class="{{if eq .ActiveNav "协会服务"}}active{{end}}" {{if eq .ActiveNav "协会服务"}}aria-current="page"{{end}}>协会服务</a>
+<a href="{{root $ "news.html"}}" data-nav="行业资讯" class="{{if eq .ActiveNav "行业资讯"}}active{{end}}" {{if eq .ActiveNav "行业资讯"}}aria-current="page"{{end}}>行业资讯</a>
+</nav>
+</header><div class="content-surface">{{end}}{{define "foot"}}</div><footer class="site-footer">
+<div class="wrap">
+<div class="footer-main">
+<div class="footer-brand">
+<a href="{{root $ "index.html"}}">
+<img src="{{root $ "slice/协会主页初步布局(1)_01@2x(1).png"}}" alt="中国环保机械行业协会">
+</a>
+<p>企业与政府沟通的纽带，服务会员、服务行业、服务社会，推动环保装备制造业高质量发展。</p>
+</div>
+<div class="footer-column">
+<h3>关于协会</h3>
+<a href="{{columnURL $ "协会简介"}}">协会简介</a>
+<a href="{{columnURL $ "组织架构"}}">组织架构</a>
+<a href="{{columnURL $ "协会章程"}}">协会章程</a>
+<a href="{{columnURL $ "联系我们"}}">联系我们</a>
+</div>
+<div class="footer-column">
+<h3>会员服务</h3>
+<a href="{{columnURL $ "申请入会"}}">申请入会</a>
+<a href="{{columnURL $ "会员权益"}}">会员权益</a>
+<a href="{{columnURL $ "政策咨询"}}">政策咨询</a>
+<a href="{{columnURL $ "标准制修订"}}">标准制修订</a>
+</div>
+<div class="footer-column">
+<h3>联系方式</h3>
+<p>电话：010-12345678</p>
+<p>邮箱：camie@example.org</p>
+<p>地址：北京市西城区 XXX 大厦</p>
+</div>
+</div>
+<div class="friend-links">友情链接：<div>
+<a href="https://www.ndrc.gov.cn/" target="_blank" rel="noopener noreferrer">中华人民共和国国家发展和改革委员会</a>
+<a href="https://www.mee.gov.cn/" target="_blank" rel="noopener noreferrer">中华人民共和国生态环境部</a>
+<a href="https://www.miit.gov.cn/" target="_blank" rel="noopener noreferrer">中华人民共和国工业和信息化部</a>
+<a href="https://www.cnipa.gov.cn/" target="_blank" rel="noopener noreferrer">国家知识产权局</a>
+<a href="https://www.most.gov.cn/" target="_blank" rel="noopener noreferrer">中华人民共和国科学技术部</a>
+<a href="https://www.mei.net.cn/" target="_blank" rel="noopener noreferrer">中国机经网</a>
+</div>
+</div>
+<div class="copyright">
+<span>© 2026 中国环保机械行业协会 版权所有</span>
+<span>京 ICP 备 12345678 号</span>
+</div>
+</div>
+</footer>
+<dialog class="modal" aria-labelledby="modal-title">
+<button class="modal-close" aria-label="关闭">×</button>
+<h2 id="modal-title">
+</h2>
+<div class="modal-body">
+</div>
+<button class="outline-button modal-dismiss">知道了</button>
+</dialog>
+</body>
+</html>{{end}}
