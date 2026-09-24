@@ -5,6 +5,9 @@
   "description": "中国环保机械行业协会静态化门户（Go + MySQL + HTML）",
   "scripts": {
     "preview": "cd backend && go run ./cmd/camie-static preview --config config.example.yaml",
+    "build:preview:new": "node frontend-preview/build-pages.mjs",
+    "check:preview:new": "node --check frontend-preview/js/main.js && node --check frontend-preview/server.cjs && node frontend-preview/validate.mjs",
+    "preview:new": "node frontend-preview/server.cjs",
     "dev": "node server.cjs",
     "start": "node server.cjs",
     "check": "node --check script.js && node --check server.cjs"
