@@ -1,10 +1,64 @@
 (() => {
   const body = document.body;
+  let columnPaths = {};
+  try {
+    columnPaths = JSON.parse(document.querySelector('#column-paths')?.textContent || '{}');
+  } catch {
+    columnPaths = {};
+  }
+
+  const elementLabel = (element) => {
+    if (!element) return '';
+    const copy = element.cloneNode(true);
+    copy.querySelectorAll('span').forEach((icon) => icon.remove());
+    return copy.textContent.trim();
+  };
+
+  const updateDetailLinkContexts = (columnCode) => {
+    document.querySelectorAll('[data-detail-link]').forEach((link) => {
+      const code = columnCode || link.dataset.defaultColumnCode;
+      if (link.dataset.detailBase && code) link.href = `${link.dataset.detailBase}?from=${encodeURIComponent(code)}`;
+    });
+  };
   const menuButton = document.querySelector('.mobile-menu-button');
   menuButton?.addEventListener('click', () => {
     const open = body.classList.toggle('menu-open');
     menuButton.setAttribute('aria-expanded', String(open));
   });
+
+  const quickRail = document.querySelector('.quick-rail');
+  if (quickRail) {
+    const desktopRail = window.matchMedia('(min-width: 781px)');
+    let railDocumentTop = 0;
+    let railFrame = 0;
+
+    const syncQuickRail = () => {
+      railFrame = 0;
+      if (!desktopRail.matches) {
+        quickRail.classList.remove('is-following');
+        return;
+      }
+      quickRail.classList.toggle('is-following', window.scrollY + 24 >= railDocumentTop);
+    };
+
+    const measureQuickRail = () => {
+      quickRail.classList.remove('is-following');
+      const rect = quickRail.getBoundingClientRect();
+      railDocumentTop = window.scrollY + rect.top;
+      quickRail.style.setProperty('--quick-rail-left', `${rect.left}px`);
+      quickRail.style.setProperty('--quick-rail-width', `${rect.width}px`);
+      syncQuickRail();
+    };
+
+    const requestQuickRailSync = () => {
+      if (!railFrame) railFrame = window.requestAnimationFrame(syncQuickRail);
+    };
+
+    measureQuickRail();
+    window.addEventListener('scroll', requestQuickRailSync, { passive: true });
+    window.addEventListener('resize', measureQuickRail);
+    desktopRail.addEventListener?.('change', measureQuickRail);
+  }
 
   document.querySelectorAll('.side-menu button[aria-expanded]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -12,18 +66,105 @@
     });
   });
 
+  const sectionBreadcrumbNav = document.querySelector('.breadcrumb[data-sync-section]');
+  const sectionBreadcrumb = sectionBreadcrumbNav?.querySelector('ol');
+  const sectionBreadcrumbBase = sectionBreadcrumb?.innerHTML;
+  const defaultSection = document.querySelector('.side-menu > li.is-active > [data-section]');
+  const syncSectionBreadcrumb = (sectionItem) => {
+    if (!sectionBreadcrumb || !sectionBreadcrumbBase) return;
+    sectionBreadcrumb.innerHTML = sectionBreadcrumbBase;
+    if (!sectionItem) return;
+
+    const sectionLabel = elementLabel(sectionItem);
+    const rootLabel = sectionBreadcrumb.querySelectorAll('li')[1]?.textContent.trim();
+    const matchedPath = Object.values(columnPaths).find((path) => path[0] === rootLabel && path.at(-1) === sectionLabel);
+    if (sectionBreadcrumbNav.dataset.syncSection === 'path' && matchedPath) {
+      sectionBreadcrumb.replaceChildren();
+      const labels = ['首页', ...matchedPath];
+      labels.forEach((label, index) => {
+        const item = document.createElement('li');
+        if (index === labels.length - 1) {
+          const current = document.createElement('span');
+          current.setAttribute('aria-current', 'page');
+          current.textContent = label;
+          item.append(current);
+        } else {
+          const link = document.createElement('a');
+          link.href = index === 0 ? '../index.html' : '#';
+          link.textContent = label;
+          item.append(link);
+        }
+        sectionBreadcrumb.append(item);
+      });
+      return;
+    }
+
+    const current = sectionBreadcrumb.querySelector('[aria-current="page"]');
+    if (current) current.textContent = sectionLabel;
+  };
+
   const activateSectionFromHash = () => {
     const section = window.location.hash.slice(1);
-    if (!section) return;
-    const sectionItem = [...document.querySelectorAll('.side-menu [data-section]')]
-      .find((item) => item.dataset.section === section);
+    const sectionItems = [...document.querySelectorAll('.side-menu [data-section]')];
+    const sectionItem = sectionItems.find((item) => item.dataset.section === section) || defaultSection;
     if (!sectionItem) return;
     document.querySelectorAll('.side-menu > li').forEach((item) => item.classList.remove('is-active'));
     sectionItem.closest('.side-menu > li')?.classList.add('is-active');
     if (sectionItem.matches('button[aria-expanded]')) sectionItem.setAttribute('aria-expanded', 'true');
+    syncSectionBreadcrumb(section ? sectionItem : null);
+    if (section) {
+      const rootLabel = sectionBreadcrumb?.querySelectorAll('li')[1]?.textContent.trim();
+      const sectionLabel = elementLabel(sectionItem);
+      const matchedCode = Object.entries(columnPaths).find(([, path]) => path[0] === rootLabel && path.at(-1) === sectionLabel)?.[0];
+      updateDetailLinkContexts(matchedCode);
+    } else {
+      updateDetailLinkContexts();
+    }
   };
   activateSectionFromHash();
   window.addEventListener('hashchange', activateSectionFromHash);
+
+  const detailPage = document.querySelector('[data-detail-page]');
+  if (detailPage) {
+    const requestedCode = new URLSearchParams(window.location.search).get('from');
+    const columnCode = columnPaths[requestedCode] ? requestedCode : detailPage.dataset.defaultColumnCode;
+    const path = columnPaths[columnCode];
+    const detailTitle = detailPage.querySelector('.article-header h1')?.textContent.trim();
+    const breadcrumbList = detailPage.querySelector('[data-detail-breadcrumb] ol');
+    if (path?.length && detailTitle && breadcrumbList) {
+      breadcrumbList.replaceChildren();
+      const homeItem = document.createElement('li');
+      const homeLink = document.createElement('a');
+      homeLink.href = '../index.html';
+      homeLink.textContent = '首页';
+      homeItem.append(homeLink);
+      breadcrumbList.append(homeItem);
+      path.forEach((label) => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = label;
+        item.append(link);
+        breadcrumbList.append(item);
+      });
+      const titleItem = document.createElement('li');
+      const current = document.createElement('span');
+      current.setAttribute('aria-current', 'page');
+      current.textContent = detailTitle;
+      titleItem.append(current);
+      breadcrumbList.append(titleItem);
+
+      const menuItems = [...detailPage.querySelectorAll('.side-menu a, .side-menu button')];
+      const target = [...path].reverse().map((label) => menuItems.find((item) => elementLabel(item) === label)).find(Boolean);
+      if (target) {
+        detailPage.querySelectorAll('.side-menu > li').forEach((item) => item.classList.remove('is-active'));
+        detailPage.querySelectorAll('.side-menu li.current').forEach((item) => item.classList.remove('current'));
+        target.closest('li')?.classList.add('current');
+        target.closest('.side-menu > li')?.classList.add('is-active');
+        target.closest('.side-submenu')?.previousElementSibling?.setAttribute('aria-expanded', 'true');
+      }
+    }
+  }
 
   const toast = document.querySelector('.toast');
   let toastTimer;
@@ -42,21 +183,96 @@
     });
   });
 
-  document.querySelectorAll('.search-form').forEach((form) => {
+  const quickMobile = document.querySelector('.quick-mobile');
+  const mobileQrTrigger = quickMobile?.querySelector('.quick-mobile-trigger');
+  const mobileQrCard = quickMobile?.querySelector('.mobile-qr-card');
+  let mobileQrPinned = false;
+  const setMobileQrOpen = (open) => {
+    if (!mobileQrTrigger || !mobileQrCard) return;
+    mobileQrTrigger.setAttribute('aria-expanded', String(open));
+    mobileQrCard.hidden = !open;
+  };
+  quickMobile?.addEventListener('mouseenter', () => setMobileQrOpen(true));
+  quickMobile?.addEventListener('mouseleave', () => {
+    if (!mobileQrPinned) setMobileQrOpen(false);
+  });
+  quickMobile?.addEventListener('focusin', () => setMobileQrOpen(true));
+  quickMobile?.addEventListener('focusout', (event) => {
+    if (!mobileQrPinned && !quickMobile.contains(event.relatedTarget)) setMobileQrOpen(false);
+  });
+  mobileQrTrigger?.addEventListener('click', () => {
+    mobileQrPinned = !mobileQrPinned;
+    setMobileQrOpen(mobileQrPinned);
+  });
+  document.addEventListener('click', (event) => {
+    if (!quickMobile?.contains(event.target)) {
+      mobileQrPinned = false;
+      setMobileQrOpen(false);
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || mobileQrCard?.hidden) return;
+    mobileQrPinned = false;
+    setMobileQrOpen(false);
+    mobileQrTrigger?.focus();
+  });
+
+  document.querySelectorAll('.search-form, .search-page-form').forEach((form) => {
     form.addEventListener('submit', (event) => {
-      event.preventDefault();
       const value = form.querySelector('input')?.value.trim() || '';
-      if (!value) return showToast('请输入搜索关键词');
-      const candidates = [...document.querySelectorAll('.searchable')];
-      let matches = 0;
-      candidates.forEach((node) => {
-        const hit = node.textContent.includes(value);
-        node.hidden = !hit;
-        if (hit) matches += 1;
-      });
-      showToast(candidates.length ? `找到 ${matches} 条相关演示内容` : `已记录搜索关键词：${value}`);
+      if (!value) {
+        event.preventDefault();
+        showToast('请输入搜索关键词');
+      }
     });
   });
+
+  const searchPage = document.querySelector('[data-search-page]');
+  if (searchPage) {
+    const params = new URLSearchParams(window.location.search);
+    const query = (params.get('q') || '').trim();
+    const normalizedQuery = query.toLocaleLowerCase('zh-CN');
+    const requestedPage = Number.parseInt(params.get('page') || '1', 10);
+    const pageSize = 6;
+    const rows = [...searchPage.querySelectorAll('[data-search-result]')];
+    const summary = searchPage.querySelector('[data-search-summary]');
+    const empty = searchPage.querySelector('[data-search-empty]');
+    const pagination = searchPage.querySelector('[data-search-pagination]');
+    const pagesSlot = searchPage.querySelector('[data-search-pages]');
+
+    document.querySelectorAll('input[name="q"]').forEach((input) => { input.value = query; });
+    const matches = query ? rows.filter((row) => row.textContent.toLocaleLowerCase('zh-CN').includes(normalizedQuery)) : [];
+    const pageCount = Math.max(1, Math.ceil(matches.length / pageSize));
+    const currentPage = Math.min(Math.max(Number.isFinite(requestedPage) ? requestedPage : 1, 1), pageCount);
+    const visible = new Set(matches.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+    rows.forEach((row) => { row.hidden = !visible.has(row); });
+
+    if (summary) summary.textContent = query ? `共找到 ${matches.length} 条与“${query}”相关的内容` : '请输入关键词进行搜索';
+    if (empty) empty.hidden = !query || matches.length > 0;
+    if (pagination) pagination.hidden = matches.length <= pageSize;
+
+    const goToPage = (page) => {
+      const next = new URL(window.location.href);
+      next.searchParams.set('q', query);
+      next.searchParams.set('page', String(page));
+      window.location.href = next.href;
+    };
+
+    if (pagesSlot && matches.length > pageSize) {
+      pagesSlot.replaceChildren();
+      for (let page = 1; page <= pageCount; page += 1) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = String(page);
+        button.classList.toggle('active', page === currentPage);
+        if (page === currentPage) button.setAttribute('aria-current', 'page');
+        button.addEventListener('click', () => goToPage(page));
+        pagesSlot.append(button);
+      }
+    }
+    searchPage.querySelector('[data-search-prev]')?.addEventListener('click', () => goToPage(Math.max(1, currentPage - 1)));
+    searchPage.querySelector('[data-search-next]')?.addEventListener('click', () => goToPage(Math.min(pageCount, currentPage + 1)));
+  }
 
   const wireTabs = (selector) => {
     document.querySelectorAll(selector).forEach((tabList) => {
@@ -94,6 +310,8 @@
         const isActive = slideIndex === activeIndex;
         slide.classList.toggle('active', isActive);
         slide.setAttribute('aria-hidden', String(!isActive));
+        if (isActive) slide.removeAttribute('tabindex');
+        else slide.setAttribute('tabindex', '-1');
       });
       dots.forEach((dot, dotIndex) => {
         const isActive = dotIndex === activeIndex;
